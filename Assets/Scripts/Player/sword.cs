@@ -17,21 +17,30 @@ public class sword : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+       
         
     }
     private void OnTriggerEnter(Collider other) {
         if(other.CompareTag("ground") && enableCloudSteping.Equals(false)){
             enableCloudSteping = true;
             player.GetComponent<PlayerController>().cloudStepping = true;
-            player.GetComponent<PlayerController>().jump();
+            print("enable cloudstep");
+            //player.GetComponent<PlayerController>().jump();
 
-            StartCoroutine(resetCloudStepping());
+            //StartCoroutine(resetCloudStepping());
+        }
+    }
+
+    private void OnTriggerExit(Collider other) {
+        if(other.CompareTag("ground")){
+            enableCloudSteping = false;
         }
     }
 
     IEnumerator resetCloudStepping(){
 
         yield return new WaitForSeconds(cloudSteppingDelay);
+        print("reset cloudstep");
         enableCloudSteping = false;
     }
 }
