@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     public bool cloudStepping;
     public float distToGround;
     public float cloudStepCooldown;
+    public float cloudStepJumpForce;
 
     private Vector3 targetPos;
     private Vector3 velocity = Vector3.zero;
@@ -97,25 +98,25 @@ public class PlayerController : MonoBehaviour
         if (movx != 0 || movy != 0)
         {
 
-            // anim.SetBool("walk", true);
-            // anim.SetBool("idle", false);
-            // anim.SetBool("jump", false);
+            anim.SetBool("walk", true);
+            anim.SetBool("idle", false);
+            anim.SetBool("jump", false);
 
         }
         else
         {
 
-            // anim.SetBool("walk", false);
-            // anim.SetBool("idle", true);
-            // anim.SetBool("jump", false);
+            anim.SetBool("walk", false);
+            anim.SetBool("idle", true);
+            anim.SetBool("jump", false);
 
 
         }
         if (movx == 0 && movy == 0)
         {
-            // anim.SetBool("walk", false);
-            // anim.SetBool("idle", true);
-            // anim.SetBool("jump", false);
+            anim.SetBool("walk", false);
+            anim.SetBool("idle", true);
+            anim.SetBool("jump", false);
         }
 
         if (moveDir != Vector3.zero)
@@ -143,22 +144,23 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
         {
 
-            if (IsGrounded())
+            if (IsGrounded().Equals(true)|| isGrounded.Equals(true))
             {
-                // anim.SetBool("jump", true);
-                // anim.SetBool("idle", false);
-                // anim.SetBool("walk", false);
+                anim.SetBool("jump", true);
+                anim.SetBool("idle", false);
+                anim.SetBool("walk", false);
 
                 //Vector3 gravity = globalGravity * gravityScale * Vector3.up;
                 //rb.AddForce(gravity, ForceMode.Acceleration);
                 rb.velocity = new Vector3(velocity.x, CalculateJumpVerticalSpeed(), 0f);
-                moveDir.y = JumpForce;
+                moveDir.y = cloudStepJumpForce;
                 isGrounded = false;
                 isJumping = true;
+                print("prepared to jump");
 
             }
 
-            if (!IsGrounded() && cloudStepping.Equals(true))
+            if (!IsGrounded().Equals(true) && cloudStepping.Equals(true))
             {
                 rb.velocity = new Vector3(velocity.x, CalculateJumpVerticalSpeed(), 0f);
                 moveDir.y = JumpForce;
@@ -166,9 +168,15 @@ public class PlayerController : MonoBehaviour
                 isJumping = true;
                 cloudStepping = false;
             }
+
+             if (rb.velocity.y > 0 && !Input.GetButtonDown("Jump"))
+            {
+                print("apply gravity fall");
+                rb.velocity += Vector3.up * Physics.gravity.y * (lowJumpMultiplierFloat - 1f) * Time.deltaTime;
+            }
         }
 
-        if (Input.GetButton("Fire1") && EnablecloudStepping.Equals(true))
+        if (Input.GetButtonDown("Fire1") && EnablecloudStepping.Equals(true))
             {
 
                 EnablecloudStepping = false;
@@ -264,6 +272,7 @@ public class PlayerController : MonoBehaviour
             {
                 distToGround = GetComponent<Collider>().bounds.extents.y;
                 print("ready for jump");
+                isGrounded = true;
                 isJumping = false;
             }
         }

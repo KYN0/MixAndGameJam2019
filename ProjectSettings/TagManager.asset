@@ -8,6 +8,8 @@ TagManager:
   - baseGround
   - shuriken
   - collectable
+  - deathzone
+  - respawnChanger
   layers:
   - Default
   - TransparentFX
